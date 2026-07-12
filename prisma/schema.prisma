@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Source {
+  website
+  daraz
+  facebook
+  other
+}
+
+enum OrderStatus {
+  pending
+  shipped
+  delivered
+  cancelled
+}
+
+model Customer {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  phone     String   @unique @db.VarChar(20)
+  email     String?  @db.VarChar(100)
+  address   String?
+  city      String?  @db.VarChar(50)
+  division  String?  @db.VarChar(30) // Dhaka, Chittagong, Sylhet, etc. — powers the division filter
+  source    Source?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  orders Order[]
+
+  @@index([phone])
+  @@index([name])
+  @@index([division])
+  @@map("customers")
+}
+
+model Product {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  price     Decimal? @db.Decimal(10, 2)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  customerId  Int         @map("customer_id")
+  orderDate   DateTime    @default(now()) @map("order_date") @db.Date
+  totalAmount Decimal     @map("total_amount") @db.Decimal(10, 2)
+  paidAmount  Decimal     @default(0) @map("paid_amount") @db.Decimal(10, 2)
+  status      OrderStatus @default(pending)
+  source      Source?
+  notes       String?
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  customer   Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+  payments   Payment[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([orderDate])
+  @@map("orders")
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   Int     @map("order_id")
+  productId Int?    @map("product_id")
+  quantity  Int
+  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model Payment {
+  id            Int      @id @default(autoincrement())
+  orderId       Int      @map("order_id")
+  amount        Decimal  @db.Decimal(10, 2)
+  paymentDate   DateTime @default(now()) @map("payment_date") @db.Date
+  paymentMethod String?  @map("payment_method") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@map("payments")
+}
