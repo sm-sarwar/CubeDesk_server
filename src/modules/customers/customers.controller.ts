@@ -10,7 +10,6 @@ const createCustomer = async (req: Request, res: Response) => {
             data: result
 
         })
-        console.log("customer create successfully", result)
 
     } catch (error) {
         res.status(500).json({
@@ -20,9 +19,15 @@ const createCustomer = async (req: Request, res: Response) => {
     }
 }
 
+
+
+
 const getAllCustomers = async (req: Request, res: Response) => {
     try {
-        const result = await customersService.getAllCustomers()
+        const { search } = req.query
+        const division = req.query.division
+        const source = req.query.source
+        const result = await customersService.getAllCustomers({ search: search as string }, division as string, source as string)
         res.status(200).json({
             message: "Customers fetched successfully",
             data: result
