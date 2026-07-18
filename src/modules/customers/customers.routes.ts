@@ -13,11 +13,9 @@ router.post('/',
     auth(UserRoles.admin),
     customersController.createCustomer)
 
-
-// router.patch('/:id',
-//     auth(UserRoles.admin),
-//     customersController.updateCustomer)
-
-
+router.delete('/:id',
+    auth(UserRoles.admin),
+    customersController.deleteCustomerById
+)
 
 export const customersRouter = router;

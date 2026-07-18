@@ -54,8 +54,18 @@ const getAllCustomers = async (payload: { search?: string }, division: string, s
     return result;
 }
 
+const deleteCustomerById = async (id: number) =>{
+    const result = await prisma.customer.delete({
+        where: {
+            id
+        }
+    })
+    return result;
+}
+
 
 export const customersService = {
     createCustomer,
-    getAllCustomers
+    getAllCustomers,
+    deleteCustomerById
 }

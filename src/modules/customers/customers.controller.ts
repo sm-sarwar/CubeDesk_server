@@ -41,7 +41,27 @@ const getAllCustomers = async (req: Request, res: Response) => {
 }
 
 
+
+const deleteCustomerById = async (req: Request, res: Response) =>{
+    try{
+        const { id } = req.params;
+        const result = await customersService.deleteCustomerById(Number(id))
+        res.status(201).json({
+            message: "Customer deleted successfully",
+            data: result
+        })
+
+    } catch(error) {
+        res.status(500).json({
+            message: "An error occurred while deleting the customer",
+            error: error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
+
 export const customersController = {
     createCustomer,
-    getAllCustomers
+    getAllCustomers,
+    deleteCustomerById
 }
