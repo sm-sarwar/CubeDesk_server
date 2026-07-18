@@ -59,9 +59,33 @@ const deleteCustomerById = async (req: Request, res: Response) =>{
     }
 }
 
+const updateCustomerById = async (req: Request, res: Response) =>{
+    try {
+        const { id }= req.params;
+        const result = await customersService.updateCustomerById(Number(id), req.body)
+        res.status(200).json({
+            message: "Customer updated successfully",
+            data: result
+        })
+    } catch(error: any) {
+
+        if (error.code === 'P2025') {
+            return res.status (404).json({
+                message: "Customer not found",
+            })
+        }
+
+        res.status(500).json({
+            message: "An error occurred while updating the customer",
+            error: error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+
+}
 
 export const customersController = {
     createCustomer,
     getAllCustomers,
-    deleteCustomerById
+    deleteCustomerById,
+    updateCustomerById
 }

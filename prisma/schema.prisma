@@ -46,16 +46,6 @@ model Customer {
   @@map("customers")
 }
 
-model Product {
-  id        Int      @id @default(autoincrement())
-  name      String   @db.VarChar(100)
-  price     Decimal? @db.Decimal(10, 2)
-  createdAt DateTime @default(now()) @map("created_at")
-
-  orderItems OrderItem[]
-
-  @@map("products")
-}
 
 model Order {
   id          Int         @id @default(autoincrement())
@@ -69,7 +59,6 @@ model Order {
   createdAt   DateTime    @default(now()) @map("created_at")
 
   customer   Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  orderItems OrderItem[]
   payments   Payment[]
 
   @@index([customerId])
@@ -78,19 +67,6 @@ model Order {
   @@map("orders")
 }
 
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  orderId   Int     @map("order_id")
-  productId Int?    @map("product_id")
-  quantity  Int
-  unitPrice Decimal @map("unit_price") @db.Decimal(10, 2)
-
-  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product Product? @relation(fields: [productId], references: [id])
-
-  @@index([orderId])
-  @@map("order_items")
-}
 
 model Payment {
   id            Int      @id @default(autoincrement())

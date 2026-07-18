@@ -18,4 +18,9 @@ router.delete('/:id',
     customersController.deleteCustomerById
 )
 
+router.patch('/:id',
+    auth(UserRoles.admin),
+    customersController.updateCustomerById
+)
+
 export const customersRouter = router;
