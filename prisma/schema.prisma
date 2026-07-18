@@ -54,7 +54,6 @@ model Order {
   totalAmount Decimal     @map("total_amount") @db.Decimal(10, 2)
   paidAmount  Decimal     @default(0) @map("paid_amount") @db.Decimal(10, 2)
   status      OrderStatus @default(pending)
-  source      Source?
   notes       String?
   createdAt   DateTime    @default(now()) @map("created_at")
 
