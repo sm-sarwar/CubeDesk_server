@@ -1,7 +1,6 @@
 import express from 'express'
 import auth, { UserRoles } from '../../middlewares/auth'
 import { ordersController } from './orders.controller'
-import { ordersService } from './orders.service'
 
 const router = express.Router()
 
@@ -23,8 +22,14 @@ router.post ('/',
 
 router.delete ('/:orderId',
     auth(UserRoles.admin),
-   ordersController.deleteOrderById
+    ordersController.deleteOrderById
     
 )
+
+router.patch('/:orderId',
+    auth(UserRoles.admin),
+    ordersController.updateOrderById
+)
+
 
 export const ordersRouter = router

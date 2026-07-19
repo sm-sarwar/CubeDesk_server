@@ -1,3 +1,4 @@
+import { OrderStatus } from "../../../generated/prisma/enums"
 import { prisma } from "../../lib/prisma"
 
 type CrateOrderPayload = {
@@ -8,11 +9,17 @@ type CrateOrderPayload = {
     notes?: string
 }
 
+type TUpdateOrderPayload = {
+    customerId?: number;
+    orderDate?: Date;
+    totalAmount?: number;
+    status?: OrderStatus;
+    notes?: string;
+};
 
-
-const orderCreate = async (payload: CrateOrderPayload) =>{
+const orderCreate = async (payload: CrateOrderPayload) => {
     const result = await prisma.order.create({
-        data : {
+        data: {
             customerId: payload.customerId,
             totalAmount: payload.totalAmount,
             paidAmount: payload.paidAmount ?? 0,
@@ -20,40 +27,63 @@ const orderCreate = async (payload: CrateOrderPayload) =>{
             notes: payload.notes ?? null
         },
         include: {
-            customer : true
+            customer: true
         }
     })
     return result
 }
 
-const getAllOrders = async () =>{
+const getAllOrders = async () => {
     const result = await prisma.order.findMany()
     return result
 }
 
 const getOrderById = async (orderId: number) => {
     const order = await prisma.order.findUnique({
-        where : {
-            id : orderId
+        where: {
+            id: orderId
         }
     })
 
-    if(!order){
-        throw new Error ('order not found')
+    if (!order) {
+        throw new Error('order not found')
     }
 
     return order;
 }
 
-const deleteOrderById = async( orderId: number) =>{
+const deleteOrderById = async (orderId: number) => {
     const result = await prisma.order.delete({
         where: {
-            id : orderId
+            id: orderId
         }
     })
 
     if (!result) {
-        throw new Error (`Order with id ${orderId} not found`)
+        throw new Error(`Order with id ${orderId} not found`)
+    }
+
+    return result
+}
+
+const updateOrderById = async (orderId: number, payload: TUpdateOrderPayload) => {
+    const updateData = {
+        ...(payload.customerId !== undefined ? { customerId: payload.customerId } : {}),
+        ...(payload.orderDate !== undefined ? { orderDate: payload.orderDate } : {}),
+        ...(payload.totalAmount !== undefined ? { totalAmount: payload.totalAmount } : {}),
+        ...(payload.status !== undefined ? { status: payload.status } : {}),
+        ...(payload.notes !== undefined ? { notes: payload.notes } : {}),
+    }
+
+    const result = await prisma.order.update({
+        where: {
+            id: orderId
+        },
+        data: updateData
+    })
+
+    if(!result) {
+        throw new Error(`Order with id ${orderId} not found`)
     }
 
     return result
@@ -63,5 +93,6 @@ export const ordersService = {
     orderCreate,
     getAllOrders,
     getOrderById,
-    deleteOrderById
+    deleteOrderById,
+    updateOrderById
 }
