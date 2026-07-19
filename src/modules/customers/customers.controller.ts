@@ -20,8 +20,6 @@ const createCustomer = async (req: Request, res: Response) => {
 }
 
 
-
-
 const getAllCustomers = async (req: Request, res: Response) => {
     try {
         const { search } = req.query

@@ -53,7 +53,58 @@ const getAllOrders = async (req: Request, res: Response) =>{
     }
 }
 
+const getOrderById = async ( req: Request, res: Response) =>{
+    try {
+        const { orderId } = req.params
+        const result = await ordersService.getOrderById(Number(orderId))
+        res.status(200).json({
+            message: 'Orders retrieved successfully',
+            data: result
+        })
+
+    } catch(error: any) {
+
+        if (error.code === 'P2025') {
+            return res.status(404).json({
+                message: "Order not found",
+            })
+        }
+        res.status (500).json({
+            message : error.message || 'Internal Server Error',
+            error : error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
+const deleteOrderById = async (req: Request, res: Response) => {
+    try {
+        const { orderId } = req.params;
+
+        const result = await ordersService.deleteOrderById(Number(orderId))
+         res.status(200).json({
+            message: 'Orders deleted successfully',
+            data: result
+        })
+
+    }catch(error: any) {
+
+        if (error.code === 'P2025') {
+            return res.status(404).json({
+                message: "Customer not found",
+            })
+        }
+
+        res.status (500).json({
+            message : error.message || 'Internal Server Error',
+            error : error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+
+}
+
 export const ordersController = {
     orderCreate,
-    getAllOrders
+    getAllOrders,
+    getOrderById,
+    deleteOrderById
 }
