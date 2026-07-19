@@ -41,6 +41,29 @@ const getAllCustomers = async (req: Request, res: Response) => {
 }
 
 
+const getCustomerById = async (req: Request, res: Response) =>{
+    try {
+        const { id } = req.params;
+        const result = await customersService.getCustomerById(Number(id))
+        res.status(200).json({
+            message: "Customer fetched successfully",
+            data: result
+        })
+    } catch (error: any) {
+
+
+        if (error.code === 'P2025') {
+            return res.status(404).json({
+                message: "Customer not found",
+            })
+        }
+        res.status(500).json({
+            message: "An error occurred while fetching the customer",
+            error: error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
 
 const deleteCustomerById = async (req: Request, res: Response) =>{
     try{
@@ -87,5 +110,6 @@ export const customersController = {
     createCustomer,
     getAllCustomers,
     deleteCustomerById,
-    updateCustomerById
+    updateCustomerById,
+    getCustomerById
 }

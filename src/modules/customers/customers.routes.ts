@@ -9,6 +9,12 @@ router.get('/',
     auth(UserRoles.admin),
     customersController.getAllCustomers)
 
+router.get('/:id',
+    auth(UserRoles.admin),
+    customersController.getCustomerById
+
+)    
+
 router.post('/', 
     auth(UserRoles.admin),
     customersController.createCustomer)

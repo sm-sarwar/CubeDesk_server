@@ -4,6 +4,12 @@ import { ordersController } from './orders.controller'
 
 const router = express.Router()
 
+
+router.get ('/',
+    auth(UserRoles.admin),
+    ordersController.getAllOrders
+)
+
 router.post ('/', 
     auth(UserRoles.admin),
     ordersController.orderCreate 

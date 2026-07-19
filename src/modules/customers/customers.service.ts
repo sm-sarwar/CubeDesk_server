@@ -54,6 +54,20 @@ const getAllCustomers = async (payload: { search?: string }, division: string, s
     return result;
 }
 
+const getCustomerById = async (id: number) =>{
+    const result = await prisma.customer.findUnique({
+        where: {
+            id
+        }
+    })
+
+    if (!result) {
+        throw new Error (`Customer with id ${id} not found`);
+    }
+
+    return result;
+}
+
 const deleteCustomerById = async (id: number) =>{
     const result = await prisma.customer.delete({
         where: {
@@ -78,5 +92,6 @@ export const customersService = {
     createCustomer,
     getAllCustomers,
     deleteCustomerById,
-    updateCustomerById
+    updateCustomerById,
+    getCustomerById
 }

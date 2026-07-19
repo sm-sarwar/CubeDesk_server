@@ -38,6 +38,22 @@ const orderCreate = async( req: Request, res: Response) => {
     }
 }
 
+const getAllOrders = async (req: Request, res: Response) =>{
+    try {
+        const result = await ordersService.getAllOrders()
+        res.status(200).json({
+            message: 'Orders retrieved successfully',
+            data: result
+        })
+    }catch (error : any) {
+        res.status (500).json({
+            message : error.message || 'Internal Server Error',
+            error : error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
 export const ordersController = {
-    orderCreate
+    orderCreate,
+    getAllOrders
 }
