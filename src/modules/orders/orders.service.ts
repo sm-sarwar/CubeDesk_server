@@ -1,3 +1,4 @@
+import { Prisma } from "../../../generated/prisma/client"
 import { OrderStatus } from "../../../generated/prisma/enums"
 import { prisma } from "../../lib/prisma"
 
@@ -33,8 +34,34 @@ const orderCreate = async (payload: CrateOrderPayload) => {
     return result
 }
 
-const getAllOrders = async () => {
-    const result = await prisma.order.findMany()
+const getAllOrders = async ( payload : {search?: string}, status? : string) => {
+    const { search} = payload
+    const andCondition : Prisma.OrderWhereInput[] = []
+
+    if( search ) {
+        andCondition.push ( {
+            customer : {
+                OR: [
+                    { name: { contains: search, mode: 'insensitive' } },
+                    { phone: { contains: search, mode: 'insensitive' } }
+                ]
+            }
+        })
+    }
+
+    if (status) {
+        andCondition.push({
+            status : status as OrderStatus 
+        })
+    }
+
+    const whereCondition: Prisma.OrderWhereInput = andCondition.length > 0 ? { AND: andCondition } : {}
+
+    const result = await prisma.order.findMany({
+        where: whereCondition,
+        include : { customer : true},
+        orderBy : { orderDate : 'desc'}
+    })
     return result
 }
 

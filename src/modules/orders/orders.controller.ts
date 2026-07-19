@@ -40,7 +40,11 @@ const orderCreate = async( req: Request, res: Response) => {
 
 const getAllOrders = async (req: Request, res: Response) =>{
     try {
-        const result = await ordersService.getAllOrders()
+
+        const { search } = req.query
+        const  status = req.query.status
+
+        const result = await ordersService.getAllOrders( {search: search as string}, status as string )
         res.status(200).json({
             message: 'Orders retrieved successfully',
             data: result
