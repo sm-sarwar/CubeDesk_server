@@ -116,10 +116,52 @@ const updateOrderById = async (orderId: number, payload: TUpdateOrderPayload) =>
     return result
 }
 
+const addPayment = async (orderId : number, payload : {amount: number, paymentMethod?:string}) =>{
+    const { amount, paymentMethod } = payload;
+
+    const result = await prisma.$transaction(async (tx) =>{
+        const order = await tx.order.findUnique({
+            where: { id : orderId}
+        })
+
+        if(!orderId) {
+            throw new Error ("ORDER_NOT_FOUND")
+        }
+
+        const currentDue = Number(order?.totalAmount) - Number(order?.paidAmount)
+
+        if (amount > currentDue) {
+            throw new Error ('AMOUNT_EXCEEDS_DUE')
+        }
+
+
+        const payment = await tx.payment.create({
+            data : {
+                orderId,
+                amount,
+                paymentMethod: paymentMethod ?? null
+            }
+        })
+
+
+        const updatedOrder = await tx.order.update({
+            where : { id: orderId},
+            data : {
+                paidAmount: {increment : amount}
+            }
+
+        })
+
+        return {payment, order:updatedOrder}
+    })
+    return result
+}
+
 export const ordersService = {
     orderCreate,
     getAllOrders,
     getOrderById,
     deleteOrderById,
-    updateOrderById
+    updateOrderById,
+    addPayment
 }

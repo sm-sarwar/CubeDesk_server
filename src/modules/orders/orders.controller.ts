@@ -131,10 +131,47 @@ const updateOrderById = async (req: Request, res: Response) =>{
 }
 
 
+const addPayment = async (req: Request, res: Response) =>{
+    try {
+        const { id } = req.params
+        const { amount, paymentMethod } = req.body
+
+        if(amount === undefined || Number(amount)<= 0){
+            return res.status (400).json({
+                message: "A valid payment amount is required"
+            })
+        }
+
+        const result = await ordersService.addPayment(Number(id), {
+            amount : Number (amount),
+            paymentMethod
+        })
+
+        res.status(201).json({
+            message : "Payment added successfully",
+            data : result
+        })
+    }catch(error: any) {
+        if (error.message === 'ORDER_NOT_FOUND') {
+            return res.status(404).json({ message: "Order not found" })
+        }
+
+        if (error.message === 'AMOUNT_EXCEEDS_DUE') {
+            return res.status(400).json({ message: "Payment amount exceeds the remaining due" })
+        }
+
+        res.status(500).json({
+            message: error.message || 'Internal Server Error',
+            error: error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
 export const ordersController = {
     orderCreate,
     getAllOrders,
     getOrderById,
     deleteOrderById,
-    updateOrderById
+    updateOrderById,
+    addPayment
 }

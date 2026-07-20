@@ -20,6 +20,11 @@ router.post ('/',
     ordersController.orderCreate 
 )
 
+router.post('/:id/payments',
+    auth.apply(UserRoles.admin),
+    ordersController.addPayment
+)
+
 router.delete ('/:orderId',
     auth(UserRoles.admin),
     ordersController.deleteOrderById
@@ -30,6 +35,7 @@ router.patch('/:orderId',
     auth(UserRoles.admin),
     ordersController.updateOrderById
 )
+
 
 
 export const ordersRouter = router
