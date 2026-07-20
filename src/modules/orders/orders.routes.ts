@@ -10,11 +10,17 @@ router.get ('/',
     ordersController.getAllOrders
 )
 
+
+router.get('/:id/payments',
+    auth(UserRoles.admin),
+    ordersController.getPaymentByOrder
+)
+
+
 router.get('/:orderId',
     auth(UserRoles.admin),
     ordersController.getOrderById
 )
-
 router.post ('/', 
     auth(UserRoles.admin),
     ordersController.orderCreate 

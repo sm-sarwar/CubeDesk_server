@@ -157,11 +157,33 @@ const addPayment = async (orderId : number, payload : {amount: number, paymentMe
     return result
 }
 
+
+const getPaymentByOrder = async (orderId: number) =>{
+    const order = await prisma.order.findUnique({
+        where: { id: orderId}
+    })
+    
+    if(!order) {
+        throw new Error ('Order not found')
+    }
+
+    const result = await prisma.payment.findMany({
+        where: {
+            orderId
+        },
+        orderBy : {
+            paymentDate : 'desc'
+        }
+    })
+    return result;
+}
+
 export const ordersService = {
     orderCreate,
     getAllOrders,
     getOrderById,
     deleteOrderById,
     updateOrderById,
-    addPayment
+    addPayment,
+    getPaymentByOrder
 }

@@ -1,21 +1,21 @@
 import { Request, Response } from "express";
 import { ordersService } from "./orders.service";
 
-const orderCreate = async( req: Request, res: Response) => {
+const orderCreate = async (req: Request, res: Response) => {
     try {
 
         const { customerId, totalAmount, paidAmount, status, notes } = req.body;
 
-        if ( !customerId || totalAmount === undefined ) {
+        if (!customerId || totalAmount === undefined) {
             return res.status(400).json({
                 message: 'customerId and totalAmount are required'
             });
         }
 
         const result = await ordersService.orderCreate({
-            customerId : Number(customerId),
-            totalAmount : Number(totalAmount),
-            paidAmount : paidAmount !== undefined ? Number(paidAmount) : 0,
+            customerId: Number(customerId),
+            totalAmount: Number(totalAmount),
+            paidAmount: paidAmount !== undefined ? Number(paidAmount) : 0,
             status,
             notes
 
@@ -25,7 +25,7 @@ const orderCreate = async( req: Request, res: Response) => {
             data: result
         })
 
-    } catch (error : any) {
+    } catch (error: any) {
 
         if (error.code === 'P2003') {
             return res.status(404).json({ message: "Customer not found" })
@@ -38,26 +38,26 @@ const orderCreate = async( req: Request, res: Response) => {
     }
 }
 
-const getAllOrders = async (req: Request, res: Response) =>{
+const getAllOrders = async (req: Request, res: Response) => {
     try {
 
         const { search } = req.query
-        const  status = req.query.status
+        const status = req.query.status
 
-        const result = await ordersService.getAllOrders( {search: search as string}, status as string )
+        const result = await ordersService.getAllOrders({ search: search as string }, status as string)
         res.status(200).json({
             message: 'Orders retrieved successfully',
             data: result
         })
-    }catch (error : any) {
-        res.status (500).json({
-            message : error.message || 'Internal Server Error',
-            error : error instanceof Error ? error.message : "Unknown error"
+    } catch (error: any) {
+        res.status(500).json({
+            message: error.message || 'Internal Server Error',
+            error: error instanceof Error ? error.message : "Unknown error"
         })
     }
 }
 
-const getOrderById = async ( req: Request, res: Response) =>{
+const getOrderById = async (req: Request, res: Response) => {
     try {
         const { orderId } = req.params
         const result = await ordersService.getOrderById(Number(orderId))
@@ -66,16 +66,16 @@ const getOrderById = async ( req: Request, res: Response) =>{
             data: result
         })
 
-    } catch(error: any) {
+    } catch (error: any) {
 
         if (error.code === 'P2025') {
             return res.status(404).json({
                 message: "Order not found",
             })
         }
-        res.status (500).json({
-            message : error.message || 'Internal Server Error',
-            error : error instanceof Error ? error.message : "Unknown error"
+        res.status(500).json({
+            message: error.message || 'Internal Server Error',
+            error: error instanceof Error ? error.message : "Unknown error"
         })
     }
 }
@@ -85,12 +85,12 @@ const deleteOrderById = async (req: Request, res: Response) => {
         const { orderId } = req.params;
 
         const result = await ordersService.deleteOrderById(Number(orderId))
-         res.status(200).json({
+        res.status(200).json({
             message: 'Orders deleted successfully',
             data: result
         })
 
-    }catch(error: any) {
+    } catch (error: any) {
 
         if (error.code === 'P2025') {
             return res.status(404).json({
@@ -98,16 +98,16 @@ const deleteOrderById = async (req: Request, res: Response) => {
             })
         }
 
-        res.status (500).json({
-            message : error.message || 'Internal Server Error',
-            error : error instanceof Error ? error.message : "Unknown error"
+        res.status(500).json({
+            message: error.message || 'Internal Server Error',
+            error: error instanceof Error ? error.message : "Unknown error"
         })
     }
 
 }
 
 
-const updateOrderById = async (req: Request, res: Response) =>{
+const updateOrderById = async (req: Request, res: Response) => {
     try {
         const { orderId } = req.params
         const result = await ordersService.updateOrderById(Number(orderId), req.body)
@@ -116,9 +116,9 @@ const updateOrderById = async (req: Request, res: Response) =>{
             data: result
         })
 
-    } catch(error : any ) {
+    } catch (error: any) {
         if (error.code === 'P2025') {
-            return res.status (404).json({
+            return res.status(404).json({
                 message: "Order not found",
             })
         }
@@ -131,27 +131,27 @@ const updateOrderById = async (req: Request, res: Response) =>{
 }
 
 
-const addPayment = async (req: Request, res: Response) =>{
+const addPayment = async (req: Request, res: Response) => {
     try {
         const { id } = req.params
         const { amount, paymentMethod } = req.body
 
-        if(amount === undefined || Number(amount)<= 0){
-            return res.status (400).json({
+        if (amount === undefined || Number(amount) <= 0) {
+            return res.status(400).json({
                 message: "A valid payment amount is required"
             })
         }
 
         const result = await ordersService.addPayment(Number(id), {
-            amount : Number (amount),
+            amount: Number(amount),
             paymentMethod
         })
 
         res.status(201).json({
-            message : "Payment added successfully",
-            data : result
+            message: "Payment added successfully",
+            data: result
         })
-    }catch(error: any) {
+    } catch (error: any) {
         if (error.message === 'ORDER_NOT_FOUND') {
             return res.status(404).json({ message: "Order not found" })
         }
@@ -167,11 +167,37 @@ const addPayment = async (req: Request, res: Response) =>{
     }
 }
 
+const getPaymentByOrder = async (req: Request, res: Response) => {
+    try {
+
+        const { id } = req.params;
+        const result = await ordersService.getPaymentByOrder(Number(id))
+        res.status(200).json({
+            message: result.length > 0
+                ? "Payment fetched successfully"
+                : "No payments found for this order",
+            data: result
+        })
+    } catch (error: any) {
+        if (error.message == "ORDER_NOT_FOUND") {
+            return res.status(404).json({
+                message: "Order not Found"
+            })
+        }
+
+        res.status(500).json({
+            message: error.message || 'Internal Server Error',
+            error: error instanceof Error ? error.message : "Unknown error"
+        })
+    }
+}
+
 export const ordersController = {
     orderCreate,
     getAllOrders,
     getOrderById,
     deleteOrderById,
     updateOrderById,
-    addPayment
+    addPayment,
+    getPaymentByOrder
 }
