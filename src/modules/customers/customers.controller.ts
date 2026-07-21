@@ -72,7 +72,13 @@ const deleteCustomerById = async (req: Request, res: Response) =>{
             data: result
         })
 
-    } catch(error) {
+    } catch(error : any) {
+         if (error.code === 'P2025') {
+            return res.status(404).json({
+                message: "Customer not found",
+            })
+        }
+        
         res.status(500).json({
             message: "An error occurred while deleting the customer",
             error: error instanceof Error ? error.message : "Unknown error"

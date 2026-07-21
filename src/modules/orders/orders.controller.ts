@@ -94,7 +94,7 @@ const deleteOrderById = async (req: Request, res: Response) => {
 
         if (error.code === 'P2025') {
             return res.status(404).json({
-                message: "Customer not found",
+                message: "Order not found",
             })
         }
 
