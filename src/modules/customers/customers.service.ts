@@ -50,6 +50,9 @@ const getAllCustomers = async (payload: { search?: string }, division: string, s
 
     const result = await prisma.customer.findMany({
         where: whereCondition,
+        orderBy : {
+            createdAt : 'desc'
+        }
     })
     return result;
 }
