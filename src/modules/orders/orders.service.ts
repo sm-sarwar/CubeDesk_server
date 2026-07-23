@@ -34,13 +34,13 @@ const orderCreate = async (payload: CrateOrderPayload) => {
     return result
 }
 
-const getAllOrders = async ( payload : {search?: string}, status? : string) => {
-    const { search} = payload
-    const andCondition : Prisma.OrderWhereInput[] = []
+const getAllOrders = async (payload: { search?: string }, status?: string) => {
+    const { search } = payload
+    const andCondition: Prisma.OrderWhereInput[] = []
 
-    if( search ) {
-        andCondition.push ( {
-            customer : {
+    if (search) {
+        andCondition.push({
+            customer: {
                 OR: [
                     { name: { contains: search, mode: 'insensitive' } },
                     { phone: { contains: search, mode: 'insensitive' } }
@@ -51,7 +51,7 @@ const getAllOrders = async ( payload : {search?: string}, status? : string) => {
 
     if (status) {
         andCondition.push({
-            status : status as OrderStatus 
+            status: status as OrderStatus
         })
     }
 
@@ -59,8 +59,8 @@ const getAllOrders = async ( payload : {search?: string}, status? : string) => {
 
     const result = await prisma.order.findMany({
         where: whereCondition,
-        include : { customer : true},
-        orderBy : { orderDate : 'desc'}
+        include: { customer: true },
+        orderBy: { orderDate: 'desc' }
     })
     return result
 }
@@ -109,34 +109,39 @@ const updateOrderById = async (orderId: number, payload: TUpdateOrderPayload) =>
         data: updateData
     })
 
-    if(!result) {
+    if (!result) {
         throw new Error(`Order with id ${orderId} not found`)
     }
 
     return result
 }
 
-const addPayment = async (orderId : number, payload : {amount: number, paymentMethod?:string}) =>{
+const addPayment = async (
+    orderId: number,
+    payload: {
+        amount: number,
+        paymentMethod?: string
+    }) => {
     const { amount, paymentMethod } = payload;
 
-    const result = await prisma.$transaction(async (tx) =>{
+    const result = await prisma.$transaction(async (tx) => {
         const order = await tx.order.findUnique({
-            where: { id : orderId}
+            where: { id: orderId }
         })
 
-        if(!orderId) {
-            throw new Error ("ORDER_NOT_FOUND")
+        if (!order) {
+            throw new Error("ORDER_NOT_FOUND")
         }
 
-        const currentDue = Number(order?.totalAmount) - Number(order?.paidAmount)
+        const currentDue = Number(order.totalAmount) - Number(order.paidAmount)
 
         if (amount > currentDue) {
-            throw new Error ('AMOUNT_EXCEEDS_DUE')
+            throw new Error('AMOUNT_EXCEEDS_DUE')
         }
 
 
         const payment = await tx.payment.create({
-            data : {
+            data: {
                 orderId,
                 amount,
                 paymentMethod: paymentMethod ?? null
@@ -145,34 +150,34 @@ const addPayment = async (orderId : number, payload : {amount: number, paymentMe
 
 
         const updatedOrder = await tx.order.update({
-            where : { id: orderId},
-            data : {
-                paidAmount: {increment : amount}
+            where: { id: orderId },
+            data: {
+                paidAmount: { increment: amount }
             }
 
         })
 
-        return {payment, order:updatedOrder}
+        return { payment, order: updatedOrder }
     })
     return result
 }
 
 
-const getPaymentByOrder = async (orderId: number) =>{
+const getPaymentByOrder = async (orderId: number) => {
     const order = await prisma.order.findUnique({
-        where: { id: orderId}
+        where: { id: orderId }
     })
-    
-    if(!order) {
-        throw new Error ('Order not found')
+
+    if (!order) {
+        throw new Error('Order not found')
     }
 
     const result = await prisma.payment.findMany({
         where: {
             orderId
         },
-        orderBy : {
-            paymentDate : 'desc'
+        orderBy: {
+            paymentDate: 'desc'
         }
     })
     return result;
