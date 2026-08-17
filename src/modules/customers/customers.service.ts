@@ -8,7 +8,7 @@ const createCustomer = async (data: Omit<Customer, 'id' | 'createdAt' | 'updated
     return result;
 }
 
-const getAllCustomers = async (payload: { search?: string }, division: string, source: string) => {
+const getAllCustomers = async (payload: { search?: string }, division: string, source: string, page: number, limit: number, skip: number) => {
     const { search } = payload;
     const andCondition: Prisma.CustomerWhereInput[] = []
 
@@ -31,7 +31,6 @@ const getAllCustomers = async (payload: { search?: string }, division: string, s
     }
 
 
-
     // division filtering 
     if (division) {
         andCondition.push({
@@ -49,6 +48,8 @@ const getAllCustomers = async (payload: { search?: string }, division: string, s
     const whereCondition: Prisma.CustomerWhereInput = andCondition.length > 0 ? { AND: andCondition } : {}
 
     const result = await prisma.customer.findMany({
+        take: limit,
+        skip,
         where: whereCondition,
         orderBy : {
             createdAt : 'desc'

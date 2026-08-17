@@ -1,7 +1,7 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { customersService } from "./customers.service";
 
-const createCustomer = async (req: Request, res: Response) => {
+const createCustomer = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
         const result = await customersService.createCustomer(req.body)
@@ -12,10 +12,12 @@ const createCustomer = async (req: Request, res: Response) => {
         })
 
     } catch (error) {
-        res.status(500).json({
-            message: "An error occurred while creating the customer",
-            error: error instanceof Error ? error.message : "Unknown error"
-        })
+        // res.status(500).json({
+        //     message: "An error occurred while creating the customer",
+        //     error: error instanceof Error ? error.message : "Unknown error"
+        // })
+        next(error)
+
     }
 }
 
@@ -25,7 +27,14 @@ const getAllCustomers = async (req: Request, res: Response) => {
         const { search } = req.query
         const division = req.query.division
         const source = req.query.source
-        const result = await customersService.getAllCustomers({ search: search as string }, division as string, source as string)
+
+        const page = Number(req.query.page ?? 1)
+        const limit = Number (req.query.limit ?? 10)
+
+
+        const skip = (page - 1) * limit;
+
+        const result = await customersService.getAllCustomers({ search: search as string }, division as string, source as string, page, limit, skip)
         res.status(200).json({
             message: "Customers fetched successfully",
             data: result

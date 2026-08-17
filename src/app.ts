@@ -4,6 +4,8 @@ import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import cors from "cors";
 import { ordersRouter } from "./modules/orders/orders.routes";
+import errorHandler from "./middlewares/globalErrorHandler";
+import { notFound } from "./middlewares/notFound";
 const app = express()
 
 app.use(cors({
@@ -17,6 +19,8 @@ app.use(express.json())
 app.use("/customers", customersRouter)
 app.use("/orders", ordersRouter)
 
+
+
 app.get ("/", (req, res) =>{
     res.send ("CubeDesk server is running")
 })
@@ -28,5 +32,8 @@ app.use((req: Request, res: Response) => {
         path: req.path
     })
 })
+
+app.use(notFound)
+app.use(errorHandler)
 
 export default app;
