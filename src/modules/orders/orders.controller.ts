@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ordersService } from "./orders.service";
+import { ordersService } from "./orders.service.js";
 
 const orderCreate = async (req: Request, res: Response) => {
     try {

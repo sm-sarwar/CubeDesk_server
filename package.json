@@ -5,24 +5,26 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "build": "prisma generate && tsup"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^26.1.1",
     "@types/pg": "^8.20.0",
-    "prisma": "^7.8.0",
+    "prisma": "^7.9.1",
+    "tsup": "^8.5.1",
     "tsx": "^4.23.0",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.8.0",
-    "@prisma/client": "^7.8.0",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "better-auth": "^1.6.23",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

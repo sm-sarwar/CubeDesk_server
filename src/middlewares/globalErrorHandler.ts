@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from 'express';
-import { Prisma } from '../../generated/prisma/client';
+import { Prisma } from '../../generated/prisma/client.js';
 
 function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
 //   if (res.headersSent) {

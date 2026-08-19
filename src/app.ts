@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express"
-import { customersRouter } from "./modules/customers/customers.routes"
+import { customersRouter } from "./modules/customers/customers.routes.js"
 import { toNodeHandler } from "better-auth/node";
-import { auth } from "./lib/auth";
+import { auth } from "./lib/auth.js";
 import cors from "cors";
-import { ordersRouter } from "./modules/orders/orders.routes";
-import errorHandler from "./middlewares/globalErrorHandler";
-import { notFound } from "./middlewares/notFound";
+import { ordersRouter } from "./modules/orders/orders.routes.js";
+import errorHandler from "./middlewares/globalErrorHandler.js";
+import { notFound } from "./middlewares/notFound.js";
 const app = express()
 
 app.use(cors({
@@ -25,13 +25,6 @@ app.get ("/", (req, res) =>{
     res.send ("CubeDesk server is running")
 })
 
-app.use((req: Request, res: Response) => {
-    res.status(404).json({
-        success: false,
-        message: 'Rout Not Found',
-        path: req.path
-    })
-})
 
 app.use(notFound)
 app.use(errorHandler)

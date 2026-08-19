@@ -1,5 +1,5 @@
-import { Customer, Prisma } from "../../../generated/prisma/client"
-import { prisma } from "../../lib/prisma"
+import { Customer, Prisma } from "../../../generated/prisma/client.js"
+import { prisma } from "../../lib/prisma.js"
 
 const createCustomer = async (data: Omit<Customer, 'id' | 'createdAt' | 'updatedAt'>) => {
     const result = await prisma.customer.create({

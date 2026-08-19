@@ -1,6 +1,6 @@
-import { Prisma } from "../../../generated/prisma/client"
-import { OrderStatus } from "../../../generated/prisma/enums"
-import { prisma } from "../../lib/prisma"
+import { Prisma } from "../../../generated/prisma/client.js"
+import { OrderStatus } from "../../../generated/prisma/enums.js"
+import { prisma } from "../../lib/prisma.js"
 
 type CrateOrderPayload = {
     customerId: number

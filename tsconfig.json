@@ -18,8 +18,8 @@
 
     // Other Outputs
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
     "esModuleInterop" : true,
 
     // Stricter Typechecking Options
