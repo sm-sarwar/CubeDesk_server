@@ -8,9 +8,9 @@ export const auth = betterAuth({
     }),
 
     trustedOrigins: [
-        "http://localhost:4000",
-        process.env.APP_URL,
-    ].filter((origin): origin is string => Boolean(origin)),
+  "http://localhost:3000",
+  process.env.APP_URL,
+].filter((origin): origin is string => Boolean(origin)),
 
     user: {
         additionalFields: {

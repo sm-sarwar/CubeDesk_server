@@ -8,10 +8,22 @@ import errorHandler from "./middlewares/globalErrorHandler.js";
 import { notFound } from "./middlewares/notFound.js";
 const app = express()
 
-app.use(cors({
-    origin: process.env.APP_URL || "http://localhost:4000",
+const allowedOrigins = [
+  "http://localhost:3000",
+  process.env.APP_URL,
+].filter((origin): origin is string => Boolean(origin));
+
+console.log("APP_URL:", process.env.APP_URL);
+console.log("NODE_ENV:", process.env.NODE_ENV);
+
+app.use(
+  cors({
+    origin: allowedOrigins,
     credentials: true,
-}))
+  })
+);
+
+// console.log("app url:",process.env.APP_URL)
 
 app.all("/api/auth/*splat", toNodeHandler(auth));
 app.use(express.json())
