@@ -13,8 +13,8 @@ const allowedOrigins = [
   process.env.APP_URL,
 ].filter((origin): origin is string => Boolean(origin));
 
-console.log("APP_URL:", process.env.APP_URL);
-console.log("NODE_ENV:", process.env.NODE_ENV);
+// console.log("APP_URL:", process.env.APP_URL);
+// console.log("NODE_ENV:", process.env.NODE_ENV);
 
 app.use(
   cors({
