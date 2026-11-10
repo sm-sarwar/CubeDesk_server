@@ -34,3 +34,5 @@ export const auth = betterAuth({
         },
     },
 });
+
+// comment for vercel issue 
