@@ -25,7 +25,7 @@ const createCustomer = async (req: Request, res: Response, next: NextFunction) =
 const getAllCustomers = async (req: Request, res: Response) => {
     try {
         const { search } = req.query
-        const division = req.query.division
+        const district = req.query.district
         const source = req.query.source
 
         const page = Number(req.query.page ?? 1)
@@ -34,7 +34,7 @@ const getAllCustomers = async (req: Request, res: Response) => {
 
         const skip = (page - 1) * limit;
 
-        const result = await customersService.getAllCustomers({ search: search as string }, division as string, source as string, page, limit, skip)
+        const result = await customersService.getAllCustomers({ search: search as string }, district as string, source as string, page, limit, skip)
         res.status(200).json({
             message: "Customers fetched successfully",
             data: result

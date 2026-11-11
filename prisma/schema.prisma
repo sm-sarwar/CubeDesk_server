@@ -33,7 +33,7 @@ model Customer {
   email     String?  @db.VarChar(100)
   address   String?
   city      String?  @db.VarChar(50)
-  division  String?  @db.VarChar(30) // Dhaka, Chittagong, Sylhet, etc. — powers the division filter
+  district  String?  @db.VarChar(30)
   source    Source?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -42,7 +42,7 @@ model Customer {
 
   @@index([phone])
   @@index([name])
-  @@index([division])
+  @@index([district])
   @@map("customers")
 }
 

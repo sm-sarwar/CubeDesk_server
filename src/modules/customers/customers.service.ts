@@ -8,35 +8,26 @@ const createCustomer = async (data: Omit<Customer, 'id' | 'createdAt' | 'updated
     return result;
 }
 
-const getAllCustomers = async (payload: { search?: string }, division: string, source: string, page: number, limit: number, skip: number) => {
+const getAllCustomers = async (payload: { search?: string }, district: string, source: string, page: number, limit: number, skip: number) => {
     const { search } = payload;
     const andCondition: Prisma.CustomerWhereInput[] = []
 
-
-    //  searching 
     if (search) {
         andCondition.push({
             OR: [
-                {
-                    name: { contains: search, mode: 'insensitive' },
-                },
-                {
-                    phone: { contains: search, mode: 'insensitive' },
-                },
-                {
-                    email : { contains: search, mode: 'insensitive' },
-                }
+                { name: { contains: search, mode: 'insensitive' } },
+                { phone: { contains: search, mode: 'insensitive' } },
+                { email: { contains: search, mode: 'insensitive' } },
+                { district: { contains: search, mode: 'insensitive' } },
             ]
         })
     }
 
-
-    // division filtering 
-    if (division) {
-        andCondition.push({
-            division
-        })
+    if (district) {
+        andCondition.push({ district: { equals: district, mode: 'insensitive' } })
     }
+
+    // source filtering, baki ongsho ager moto
 
     // source filtering
     if (source) {
